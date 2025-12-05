@@ -28,6 +28,7 @@ from datetime import datetime
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from loguru import logger
+import os
 
 from pyocamcalib.core._utils import get_reprojection_error_all, get_reprojection_error
 from pyocamcalib.core.linear_estimation import get_first_linear_estimate, get_taylor_linear
@@ -114,11 +115,16 @@ class CalibrationEngine:
     def save_detection(self):
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y_%H%M%S")
-        with open(f'detections_{self.cam_name}_{dt_string}.pickle',
+
+        save_path = os.path.join(self.working_dir, f'detections_{self.cam_name}_{dt_string}.pickle')
+        
+        with open(save_path,
                   'wb') as f:
             pickle.dump(self.detections, f)
 
             logger.info(f"Detection file saved with success.")
+
+            return save_path
 
     def load_detection(self, file_path: str):
         with open(file_path, 'rb') as f:
